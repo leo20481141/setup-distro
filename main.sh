@@ -109,6 +109,7 @@ EOF
   # Git Credential Manager
   wget -O gcm-linux_amd64.deb https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.6.1/gcm-linux_amd64.2.6.1.deb
 
+  # Installing Packages
   PACKAGES="vlc code git brave-browser nodejs samba"
 
   if ! [ "$DESKTOP_ENVIRONMENT" = "kde" ]; then
@@ -126,16 +127,18 @@ EOF
   sudo apt purge firefox firefox* libreoffice libreoffice* -y
   sudo apt autoremove --purge -y
 
+  # Removing Leftovers
   rm onlyoffice-desktopeditors_amd64.deb
   rm gcm-linux_amd64.deb
   sudo rm -rf .mozilla
 
+  # Git Configuration
   git config --global user.name "leo20481141"
   git config --global user.email "newleovera14122019@gmail.com"
   git config --global core.editor "code --wait"
   git config --global core.autocrlf "input"
 
-  curl -L https://aka.ms/gcm/linux-install-source.sh | sh
+  # Git Credential Manager Configuration
   git-credential-manager configure
   git config --global credential.credentialStore secretservice
 fi
