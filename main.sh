@@ -5,6 +5,7 @@ DESKTOP_ENVIRONMENT="unknown"
 INSTALL_BUN="default"
 INSTALL_VM="default"
 INSTALL_KDE_CONNECT="default"
+CONFIGURE_SAMBA="default"
 
 for arg in "$@"; do
   if [ "$arg" = "--setup" ]; then
@@ -15,6 +16,8 @@ for arg in "$@"; do
     INSTALL_VM = "true"
   elif [ "$arg" = "--install-kde-connect" ]; then
     INSTALL_KDE_CONNECT="true"
+  elif [ "$arg" = "--configure-samba" ]; then
+    CONFIGURE_SAMBA="true"
   else
     echo "The argumment $arg is not supported."
     exit 1
@@ -69,10 +72,23 @@ if [ "$SETUP_DISTRO" = "true" ]; then
       echo "Invalid choise."
     fi
   done
+  while [ "$CONFIGURE_SAMBA" = "default" ]; do
+    read -p "Do you want to configure samba (only for ubuntu based distros)? [Y/n]: " INPUT
+    [ "$INPUT" = "" ] && CONFIGURE_SAMBA="true"
+    [ "$INPUT" = "y" ] && CONFIGURE_SAMBA="true"
+    [ "$INPUT" = "n" ] && CONFIGURE_SAMBA="false"
+    [ "$INPUT" = "Y" ] && CONFIGURE_SAMBA="true"
+    [ "$INPUT" = "N" ] && CONFIGURE_SAMBA="false"
+
+    if [ "$CONFIGURE_SAMBA" = "default" ]; then
+      echo "Invalid choise."
+    fi
+  done
 else
   [ "$INSTALL_BUN" = "default" ] && INSTALL_BUN="false"
   [ "$INSTALL_VM" = "default" ] && INSTALL_VM="false"
   [ "$INSTALL_KDE_CONNECT" = "default" ] && INSTALL_KDE_CONNECT="false"
+  [ "$CONFIGURE_SAMBA" = "default" ] && CONFIGURE_SAMBA="false"
 fi
 
 sudo apt update
@@ -145,6 +161,16 @@ fi
 
 if [ "$INSTALL_BUN" = "true" ]; then
   curl -fsSL https://bun.sh/install | bash
+fi
+
+if [ "$CONFIGURE_SAMBA" = "true" ]; then
+  sudo rm /etc/samba/smb.conf
+  sudo cp ./smb-ubuntu.conf /etc/samba/smb.conf
+  sudo usermod -aG sambashare $USER
+  sudo chown root:root /etc/samba/smb.conf
+  sudo chmod 644 /etc/samba/smb.conf
+  sudo systemctl stop smbd nmbd
+  sudo systemctl enable --now smbd
 fi
 
 if [ "$INSTALL_VM" = "true" ]; then
