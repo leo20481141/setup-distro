@@ -13,7 +13,7 @@ for arg in "$@"; do
   elif [ "$arg" = "--install-bun" ]; then
     INSTALL_BUN="true"
   elif [ "$arg" = "--install-vm" ]; then
-    INSTALL_VM = "true"
+    INSTALL_VM="true"
   elif [ "$arg" = "--install-kde-connect" ]; then
     INSTALL_KDE_CONNECT="true"
   elif [ "$arg" = "--configure-samba" ]; then
@@ -215,12 +215,12 @@ if [ "$INSTALL_VM" = "true" ]; then
   CMDLINE_NORMAL_NEW="${CMDLINE_NORMAL:0:$CMDLINE_NORMAL_END} intel_iommu=on iommu=pt${CMDLINE_NORMAL:$CMDLINE_NORMAL_END}"
   CMDLINE_DEFAULT_NEW="${CMDLINE_DEFAULT:0:$CMDLINE_DEFAULT_END} intel_iommu=on iommu=pt${CMDLINE_DEFAULT:$CMDLINE_DEFAULT_END}"
   if [ "$WRITE_TO" = "normal" ]; then
-    sed -i "s/^${CMDLINE_NORMAL}$/${CMDLINE_NORMAL_NEW}" "/etc/default/grub"
+    sudo sed -i "s/^${CMDLINE_NORMAL}$/${CMDLINE_NORMAL_NEW}/" "/etc/default/grub"
   fi
   if [ "$WRITE_TO" = "default" ]; then
-    sed -i "s/^${CMDLINE_DEFAULT}$/${CMDLINE_DEFAULT_NEW}" "/etc/default/grub"
+    sudo sed -i "s/^${CMDLINE_DEFAULT}$/${CMDLINE_DEFAULT_NEW}/" "/etc/default/grub"
   fi
-  update-grub
+  sudo update-grub
 fi
 
 echo "@neutralinojs/neu"
